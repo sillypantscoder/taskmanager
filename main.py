@@ -35,7 +35,7 @@ def get(path):
 	elif path.startswith("/complete/"):
 		taskid = path[10:]
 		f = json.loads(read_file("tasks.json"))
-		f.pop(int(taskid))
+		f[int(taskid)]["repeat"] = 0
 		write_file("tasks_new.json", json.dumps(f))
 		return {
 			"status": 200,

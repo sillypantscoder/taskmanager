@@ -3,13 +3,13 @@
 	<head>
 		<title>Task Manager</title>
 		<style>
-#tasks div {
+.tasks div {
 	background-color: #9AF;
 	border-left: 0.3em solid blue;
 	margin: 0.8em;
 	padding: 0.8em;
 }
-#tasks div.before {
+.tasks div.before {
 	background-color: #F99;
 	border-left-color: red;
 }
@@ -17,7 +17,9 @@
 	</head>
 	<body>
 		<h1>Task Manager</h1>
-		<div id="tasks"></div>
+		<div id="tasks" class="tasks"></div>
+		<h3>Completed tasks</h3>
+		<div id="completedtasks" class="tasks"></div>
 		<script src="https://momentjs.com/downloads/moment.min.js"></script>
 		<script>
 async function getURL(url) {
@@ -37,14 +39,19 @@ getURL("/tasks.json").then((v) => {
 		var task = tasks[i];
 		var div = document.createElement("div");
 		var date = new Date(task.date)
-		if (date < new Date()) {
-			div.classList.add("before")
-			div.innerHTML = "<b>" + task.name + "</b> needed to be done " + moment(date.toISOString()).fromNow();
-		} else {
-			div.innerHTML = "<b>" + task.name + "</b> needs to be done " + moment(date.toISOString()).fromNow();
+		if (task.repeat == 1) {
+			if (date < new Date()) {
+				div.classList.add("before")
+				div.innerHTML = "<b>" + task.name + "</b> needed to be done " + moment(date.toISOString()).fromNow();
+			} else {
+				div.innerHTML = "<b>" + task.name + "</b> needs to be done " + moment(date.toISOString()).fromNow();
+			}
+			div.innerHTML += `<br><button onclick='getURL("/complete/${i}")'>Completed</button>`
+			document.getElementById("tasks").appendChild(div);
+		} else if (task.repeat == 0) {
+			div.innerHTML = "<b>" + task.name + "</b> was done " + moment(date.toISOString()).fromNow();
+			document.getElementById("completedtasks").appendChild(div);
 		}
-		div.innerHTML += `<br><button onclick='getURL("/complete/${i}")'>Completed</button>`
-		document.getElementById("tasks").appendChild(div);
 	}
 })
 		</script>
