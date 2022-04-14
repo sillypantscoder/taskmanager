@@ -3,6 +3,12 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 hostName = "localhost"
 serverPort = 8080
 
+def read_file(filename):
+	f = open(filename, "r")
+	t = f.read()
+	f.close()
+	return t
+
 def get(path):
 	if path == "/":
 		return {
@@ -10,9 +16,15 @@ def get(path):
 			"headers": {
 				"Content-Type": "text/html"
 			},
-			"content": f"<html><head><title>Task Manager</title></head>\n<body>\n\
-<h1>Task Manager</h1>\
-\n</body></html>"
+			"content": read_file("index.html")
+		}
+	elif path == "/tasks.json":
+		return {
+			"status": 200,
+			"headers": {
+				"Content-Type": "application/json"
+			},
+			"content": read_file("tasks.json")
 		}
 	else:
 		return {

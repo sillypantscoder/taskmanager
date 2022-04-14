@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Task Manager</title>
+	</head>
+	<body>
+		<h1>Task Manager</h1>
+		<div id="tasks"></div>
+		<script>
+async function getURL(url) {
+	r = await new Promise((resolve) => {
+		var x = new XMLHttpRequest();
+		x.open("GET", url);
+		x.addEventListener("loadend", () => {
+			resolve(x.responseText);
+		})
+		x.send();
+	})
+	return r;
+}
+getURL("/tasks.json").then((v) => {
+	tasks = JSON.parse(v);
+	for (var i = 0; i < tasks.length; i++) {
+		var task = tasks[i];
+		var div = document.createElement("div");
+		div.innerHTML = task.name;
+		document.getElementById("tasks").appendChild(div);
+	}
+})
+		</script>
+	</body>
+</html>
