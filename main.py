@@ -36,7 +36,17 @@ def get(path):
 		taskid = path[10:]
 		f = json.loads(read_file("tasks.json"))
 		f[int(taskid)]["repeat"] = 0
-		write_file("tasks_new.json", json.dumps(f))
+		write_file("tasks.json", json.dumps(f, sort_keys=True, indent=4).replace("    ", "\t"))
+		return {
+			"status": 200,
+			"headers": {},
+			"content": ""
+		}
+	elif path.startswith("/restore/"):
+		taskid = path[9:]
+		f = json.loads(read_file("tasks.json"))
+		f[int(taskid)]["repeat"] = 1
+		write_file("tasks.json", json.dumps(f, sort_keys=True, indent=4).replace("    ", "\t"))
 		return {
 			"status": 200,
 			"headers": {},

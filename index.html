@@ -46,10 +46,11 @@ getURL("/tasks.json").then((v) => {
 			} else {
 				div.innerHTML = "<b>" + task.name + "</b> needs to be done " + moment(date.toISOString()).fromNow();
 			}
-			div.innerHTML += `<br><button onclick='getURL("/complete/${i}")'>Completed</button>`
+			div.innerHTML += `<br><button onclick='getURL("/complete/${i}").then(() => location.reload())'>Completed</button>`
 			document.getElementById("tasks").appendChild(div);
 		} else if (task.repeat == 0) {
 			div.innerHTML = "<b>" + task.name + "</b> was done " + moment(date.toISOString()).fromNow();
+			div.innerHTML += `<br><button onclick='getURL("/restore/${i}").then(() => location.reload())'>Completed</button>`
 			document.getElementById("completedtasks").appendChild(div);
 		}
 	}
