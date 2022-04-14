@@ -13,6 +13,13 @@
 	background-color: #F99;
 	border-left-color: red;
 }
+#completedtasks div {
+	background-color: #9F9;
+	border-left-color: green;
+}
+a {
+	color: rgb(0, 0, 238);
+}
 		</style>
 	</head>
 	<body>
@@ -46,11 +53,11 @@ getURL("/tasks.json").then((v) => {
 			} else {
 				div.innerHTML = "<b>" + task.name + "</b> needs to be done " + moment(date.toISOString()).fromNow();
 			}
-			div.innerHTML += `<br><button onclick='getURL("/complete/${i}").then(() => location.reload())'>Completed</button>`
+			div.innerHTML += `<br><button onclick='getURL("/complete/${i}").then(() => location.reload())'>Completed</button> <a href="/edit/${i}">Edit task</a>`
 			document.getElementById("tasks").appendChild(div);
 		} else if (task.repeat == 0) {
 			div.innerHTML = "<b>" + task.name + "</b> was done " + moment(date.toISOString()).fromNow();
-			div.innerHTML += `<br><button onclick='getURL("/restore/${i}").then(() => location.reload())'>Completed</button>`
+			div.innerHTML += `<br><button onclick='getURL("/restore/${i}").then(() => location.reload())'>Restore</button> <a href="/edit/${i}">Edit task</a>`
 			document.getElementById("completedtasks").appendChild(div);
 		}
 	}

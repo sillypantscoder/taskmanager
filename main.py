@@ -52,6 +52,41 @@ def get(path):
 			"headers": {},
 			"content": ""
 		}
+	elif path.startswith("/edit/"):
+		taskid = path[6:]
+		f = json.loads(read_file("tasks.json"))
+		file = read_file("edit.html").replace("{TASKID}", taskid).replace("{TASKNAME}", f[int(taskid)]["name"]).replace("{TASKDATEISO}", f[int(taskid)]["date"])
+		return {
+			"status": 200,
+			"headers": {
+				"Content-Type": "text/html"
+			},
+			"content": file
+		}
+	else:
+		return {
+			"status": 404,
+			"headers": {
+				"Content-Type": "text/html"
+			},
+			"content": f"<html><head><title>Task Manager</title></head>\n<body>\n\
+<h1>Not Found</h1><p><a href='/' style='color: rgb(0, 0, 238);'>Return home</a></p>\
+\n</body></html>"
+		}
+
+def post(path, headers):
+	if path.startswith("/post_edit/"):
+		taskid = path[11:]
+		f = json.loads(read_file("tasks.json"))
+		f[int(taskid)]["name"] = headers["X-Task-Name"]
+		f[int(taskid)]["date"] = headers["X-Task-Date"]
+		f[int(taskid)]["repeat"] = int(headers["X-Task-Repeat"])
+		write_file("tasks.json", json.dumps(f, sort_keys=True, indent=4).replace("    ", "\t"))
+		return {
+			"status": 200,
+			"headers": {},
+			"content": ""
+		}
 	else:
 		return {
 			"status": 404,
@@ -71,11 +106,13 @@ class MyServer(BaseHTTPRequestHandler):
 			self.send_header(h, res["headers"][h])
 		self.end_headers()
 		self.wfile.write(res["content"].encode("utf-8"))
-		#self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
-		#self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
-		#self.wfile.write(bytes("<body>", "utf-8"))
-		#self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
-		#self.wfile.write(bytes("</body></html>", "utf-8"))
+	def do_POST(self):
+		res = post(self.path, self.headers)
+		self.send_response(res["status"])
+		for h in res["headers"]:
+			self.send_header(h, res["headers"][h])
+		self.end_headers()
+		self.wfile.write(res["content"].encode("utf-8"))
 	def log_message(self, format: str, *args) -> None:
 		print(args[0].split(" ")[0], "request to", args[0].split(" ")[1], "(status code:", args[1] + ")")
 		# don't output requests

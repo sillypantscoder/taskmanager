@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Editing {TASKNAME}</title>
+	</head>
+	<html>
+		<h2>Editing task</h2>
+		<p>
+			Task name:
+			<input type="text" id="name" value="{TASKNAME}">
+		</p>
+		<p>
+			Date:
+			<input type="date" id="date">
+		</p>
+		<p>
+			Task status:
+			<select id="repeat">
+				<option value="1" selected>Need to be done</option>
+				<option value="0">Completed</option>
+			</select>
+		</p>
+		<p>
+			<button onclick="finish()">Save</button>
+		</p>
+		<script>
+(() => {
+	var x = document.getElementById("date")
+	x.valueAsDate = new Date("{TASKDATEISO}")
+})()
+async function finish() {
+	var name = document.getElementById("name").value
+	var date = document.getElementById("date").valueAsDate.toISOString()
+	var repeat = document.getElementById("repeat").value
+	var x = new XMLHttpRequest()
+	x.open("POST", "/post_edit/{TASKID}")
+	x.setRequestHeader("X-Task-Date", date)
+	x.setRequestHeader("X-Task-Name", name)
+	x.setRequestHeader("X-Task-Repeat", repeat)
+	x.addEventListener("loadend", () => {
+		location.replace("/")
+	})
+	x.send()
+}
+		</script>
+	</html>
+</html>
