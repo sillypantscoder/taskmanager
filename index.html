@@ -2,6 +2,18 @@
 <html>
 	<head>
 		<title>Task Manager</title>
+		<style>
+#tasks div {
+	background-color: #9AF;
+	border-left: 0.3em solid blue;
+	margin: 0.8em;
+	padding: 0.8em;
+}
+#tasks div.before {
+	background-color: #F99;
+	border-left-color: red;
+}
+		</style>
 	</head>
 	<body>
 		<h1>Task Manager</h1>
@@ -24,7 +36,14 @@ getURL("/tasks.json").then((v) => {
 	for (var i = 0; i < tasks.length; i++) {
 		var task = tasks[i];
 		var div = document.createElement("div");
-		div.innerHTML = task.name + " needs to be done " + moment(task.date).fromNow();
+		var date = new Date(task.date)
+		if (date < new Date()) {
+			div.classList.add("before")
+			div.innerHTML = "<b>" + task.name + "</b> needed to be done " + moment(date.toISOString()).fromNow();
+		} else {
+			div.innerHTML = "<b>" + task.name + "</b> needs to be done " + moment(date.toISOString()).fromNow();
+		}
+		div.innerHTML += `<br><button onclick='getURL("/complete/${i}")'>Completed</button>`
 		document.getElementById("tasks").appendChild(div);
 	}
 })

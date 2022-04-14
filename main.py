@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
 
 hostName = "localhost"
 serverPort = 8080
@@ -8,6 +9,11 @@ def read_file(filename):
 	t = f.read()
 	f.close()
 	return t
+
+def write_file(filename, content):
+	f = open(filename, "w")
+	f.write(content)
+	f.close()
 
 def get(path):
 	if path == "/":
@@ -25,6 +31,16 @@ def get(path):
 				"Content-Type": "application/json"
 			},
 			"content": read_file("tasks.json")
+		}
+	elif path.startswith("/complete/"):
+		taskid = path[10:]
+		f = json.loads(read_file("tasks.json"))
+		f.pop(int(taskid))
+		write_file("tasks_new.json", json.dumps(f))
+		return {
+			"status": 200,
+			"headers": {},
+			"content": ""
 		}
 	else:
 		return {
