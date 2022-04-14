@@ -63,6 +63,21 @@ def get(path):
 			},
 			"content": file
 		}
+	elif path == "/new":
+		f = json.loads(read_file("tasks.json"))
+		f.append({
+			"name": "Enter task name here",
+			"date": "",
+			"repeat": 1
+		})
+		write_file("tasks.json", json.dumps(f, sort_keys=True, indent=4).replace("    ", "\t"))
+		return {
+			"status": 307,
+			"headers": {
+				"Location": "/edit/" + str(len(f) - 1)
+			},
+			"content": ""
+		}
 	else:
 		return {
 			"status": 404,

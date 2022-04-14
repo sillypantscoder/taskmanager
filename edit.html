@@ -30,7 +30,9 @@
 })()
 async function finish() {
 	var name = document.getElementById("name").value
-	var date = document.getElementById("date").valueAsDate.toISOString()
+	var date = document.getElementById("date").valueAsDate
+	if (date) date = date.toISOString()
+	else date = ""
 	var repeat = document.getElementById("repeat").value
 	var x = new XMLHttpRequest()
 	x.open("POST", "/post_edit/{TASKID}")
