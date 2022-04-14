@@ -6,6 +6,7 @@
 	<body>
 		<h1>Task Manager</h1>
 		<div id="tasks"></div>
+		<script src="https://momentjs.com/downloads/moment.min.js"></script>
 		<script>
 async function getURL(url) {
 	r = await new Promise((resolve) => {
@@ -23,7 +24,7 @@ getURL("/tasks.json").then((v) => {
 	for (var i = 0; i < tasks.length; i++) {
 		var task = tasks[i];
 		var div = document.createElement("div");
-		div.innerHTML = task.name;
+		div.innerHTML = task.name + " needs to be done " + moment(task.date).fromNow();
 		document.getElementById("tasks").appendChild(div);
 	}
 })
