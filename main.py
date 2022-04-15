@@ -1,5 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from dateutil import parser
+import datetime
 
 hostName = "localhost"
 serverPort = 8080
@@ -35,7 +37,10 @@ def get(path):
 	elif path.startswith("/complete/"):
 		taskid = path[10:]
 		f = json.loads(read_file("tasks.json"))
-		f[int(taskid)]["repeat"] = 0
+		if f[int(taskid)]["repeat"] == 1:
+			f[int(taskid)]["repeat"] = 0
+		else:
+			f[int(taskid)]["date"] = (parser.parse(f[int(taskid)]["date"]) + datetime.timedelta(days=f[int(taskid)]["repeat"] - 1)).isoformat()
 		write_file("tasks.json", json.dumps(f, sort_keys=True, indent=4).replace("    ", "\t"))
 		return {
 			"status": 200,

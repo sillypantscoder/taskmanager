@@ -15,10 +15,14 @@
 		</p>
 		<p>
 			Task status:
-			<select id="repeat">
+			<select id="repeat" oninput="document.getElementById('repeatv').disabled = (this.value != 2)">
 				<option value="1" selected>Need to be done</option>
 				<option value="0">Completed</option>
+				<option value="2">Repeating...</option>
 			</select>
+			<div id="repeatdays">
+				Number of days between repeats: <input type="number" min="1" value="7" id="repeatv" disabled>
+			</div>
 		</p>
 		<p>
 			<button onclick="finish()">Save</button>
@@ -34,6 +38,7 @@ async function finish() {
 	if (date) date = date.toISOString()
 	else date = ""
 	var repeat = document.getElementById("repeat").value
+	if (repeat == 2) var repeat = Number(document.getElementById("repeatv").value) + 1
 	var x = new XMLHttpRequest()
 	x.open("POST", "/post_edit/{TASKID}")
 	x.setRequestHeader("X-Task-Date", date)

@@ -75,6 +75,15 @@ getURL("/tasks.json").then((v) => {
 			div.innerHTML = "<b>" + task.name + "</b> was done " + moment(date.toISOString()).fromNow();
 			div.innerHTML += `<br><button onclick='getURL("/restore/${taskindex}").then(() => location.reload())'>Restore</button> <a href="/edit/${taskindex}">Edit task</a>`
 			document.getElementById("completedtasks").appendChild(div);
+		} else {
+			if (date < new Date()) {
+				div.classList.add("before")
+				div.innerHTML = "<b>" + task.name + "</b> needed to be done " + moment(date.toISOString()).fromNow();
+			} else {
+				div.innerHTML = "<b>" + task.name + "</b> needs to be done " + moment(date.toISOString()).fromNow();
+			}
+			div.innerHTML += `<br><button onclick='getURL("/complete/${taskindex}").then(() => location.reload())'>Completed</button> <a href="/edit/${taskindex}">Edit task</a> (Repeating task)`
+			document.getElementById("tasks").appendChild(div);
 		}
 	}
 })
