@@ -43,8 +43,22 @@ async function getURL(url) {
 }
 getURL("/tasks.json").then((v) => {
 	tasks = JSON.parse(v);
-	for (var i = 0; i < tasks.length; i++) {
-		var task = tasks[i];
+	var orderedtasks = JSON.parse(v);
+	orderedtasks.sort(function (aO, bO) {
+		var a = new Date(aO.date).getTime();
+		var b = new Date(bO.date).getTime();
+		if (a < b) {
+			return -1;
+		}
+		if (a > b) {
+			return 1;
+		}
+		// a must be equal to b
+		return 0;
+	})
+	for (var i = 0; i < orderedtasks.length; i++) {
+		var task = orderedtasks[i];
+		var taskindex = tasks.findIndex((e) => { return (e.name) == (task.name) })
 		var div = document.createElement("div");
 		var date = new Date(task.date)
 		if (task.date == "") date = new Date();
@@ -55,11 +69,11 @@ getURL("/tasks.json").then((v) => {
 			} else {
 				div.innerHTML = "<b>" + task.name + "</b> needs to be done " + moment(date.toISOString()).fromNow();
 			}
-			div.innerHTML += `<br><button onclick='getURL("/complete/${i}").then(() => location.reload())'>Completed</button> <a href="/edit/${i}">Edit task</a>`
+			div.innerHTML += `<br><button onclick='getURL("/complete/${taskindex}").then(() => location.reload())'>Completed</button> <a href="/edit/${taskindex}">Edit task</a>`
 			document.getElementById("tasks").appendChild(div);
 		} else if (task.repeat == 0) {
 			div.innerHTML = "<b>" + task.name + "</b> was done " + moment(date.toISOString()).fromNow();
-			div.innerHTML += `<br><button onclick='getURL("/restore/${i}").then(() => location.reload())'>Restore</button> <a href="/edit/${i}">Edit task</a>`
+			div.innerHTML += `<br><button onclick='getURL("/restore/${taskindex}").then(() => location.reload())'>Restore</button> <a href="/edit/${taskindex}">Edit task</a>`
 			document.getElementById("completedtasks").appendChild(div);
 		}
 	}
